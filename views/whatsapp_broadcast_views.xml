@@ -1,0 +1,132 @@
+<odoo>
+    <record id="view_whatsapp_broadcast_recipient_list" model="ir.ui.view">
+        <field name="name">whatsapp.broadcast.recipient.list</field>
+        <field name="model">whatsapp.broadcast.recipient</field>
+        <field name="arch" type="xml">
+            <list create="false" delete="false" edit="false">
+                <field name="phone"/>
+                <field name="display_name"/>
+                <field name="partner_id"/>
+                <field name="send_mode"/>
+                <field name="state" decoration-success="state == 'sent'" decoration-danger="state == 'failed'"/>
+                <field name="error_message"/>
+                <field name="sent_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_whatsapp_broadcast_campaign_list" model="ir.ui.view">
+        <field name="name">whatsapp.broadcast.campaign.list</field>
+        <field name="model">whatsapp.broadcast.campaign</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="template_id"/>
+                <field name="state" decoration-success="state == 'done'" decoration-info="state == 'sending'"/>
+                <field name="recipient_count"/>
+                <field name="sent_count"/>
+                <field name="failed_count"/>
+                <field name="scheduled_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_whatsapp_broadcast_campaign_form" model="ir.ui.view">
+        <field name="name">whatsapp.broadcast.campaign.form</field>
+        <field name="model">whatsapp.broadcast.campaign</field>
+        <field name="arch" type="xml">
+            <form string="Broadcast Campaign">
+                <header>
+                    <button name="action_generate_recipients" type="object" string="Preview Recipients"
+                            class="btn-primary" invisible="state not in ('draft','recipients_generated')"/>
+                    <button name="action_send_now" type="object" string="Send Now"
+                            class="btn-primary" invisible="state != 'recipients_generated'"
+                            confirm="This will start sending to all recipients now. Continue?"/>
+                    <button name="action_schedule" type="object" string="Schedule"
+                            invisible="state != 'recipients_generated'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('done','cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,recipients_generated,scheduled,sending,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_view_recipients" class="oe_stat_button" icon="fa-users">
+                            <field name="recipient_count" widget="statinfo" string="Recipients"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="whatsapp_config_id"/>
+                            <field name="template_id"/>
+                        </group>
+                        <group>
+                            <field name="scheduled_at"/>
+                            <field name="batch_size"/>
+                            <field name="sent_count"/>
+                            <field name="failed_count"/>
+                            <field name="pending_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Audience">
+                            <group string="Specific Customers (hand-pick directly)">
+                                <field name="partner_ids" nolabel="1" widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                            </group>
+                            <group string="Manual Numbers">
+                                <field name="manual_numbers" nolabel="1"
+                                       placeholder="919876543210,Anirudh&#10;919812345678"/>
+                            </group>
+                            <group>
+                                <field name="use_audience_filter"/>
+                            </group>
+                            <group invisible="not use_audience_filter">
+                                <field name="partner_tag_ids" widget="many2many_tags"/>
+                                <field name="min_last_order_date"/>
+                            </group>
+                            <group string="Advanced Filter (Odoo domain on Customers)"
+                                   invisible="not use_audience_filter">
+                                <field name="partner_domain" nolabel="1" widget="domain"
+                                       options="{'model': 'res.partner'}"/>
+                            </group>
+                            <p class="text-muted">
+                                Click "Preview Recipients" to add everyone matching the above into the
+                                Recipients tab. This only ADDS matches — it never removes recipients
+                                you've added or deleted by hand there. The Customer Filter is off by
+                                default, so a plain click only pulls in "Specific Customers" and
+                                "Manual Numbers" — turn the filter on to also match by tag, order
+                                history, or a custom domain.
+                            </p>
+                        </page>
+                        <page string="Recipients">
+                            <field name="recipient_ids">
+                                <list editable="bottom">
+                                    <field name="partner_id" placeholder="Pick a customer, or leave blank and type a phone"/>
+                                    <field name="phone"/>
+                                    <field name="display_name"/>
+                                    <field name="send_mode" readonly="1"/>
+                                    <field name="state" readonly="1"
+                                           decoration-success="state == 'sent'"
+                                           decoration-danger="state == 'failed'"/>
+                                    <field name="error_message" readonly="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_broadcast_campaign" model="ir.actions.act_window">
+        <field name="name">Broadcasts</field>
+        <field name="res_model">whatsapp.broadcast.campaign</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_whatsapp_broadcast_campaign" name="Broadcasts"
+              parent="menu_whatsapp_root" action="action_whatsapp_broadcast_campaign" sequence="20"/>
+</odoo>

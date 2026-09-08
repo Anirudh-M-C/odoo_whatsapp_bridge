@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="whatsapp_ai.WhatsappThread">
+        <div class="o_whatsapp_thread">
+
+            <!-- Header -->
+            <div class="o_whatsapp_thread_header">
+                <div class="o_whatsapp_avatar" t-esc="customerInitial"/>
+                <div class="o_whatsapp_thread_header_info">
+                    <div class="o_whatsapp_thread_header_title" t-esc="customerTitle"/>
+                    <div class="o_whatsapp_thread_header_subtitle" t-if="customerPhone" t-esc="customerPhone"/>
+                </div>
+                <div class="o_whatsapp_thread_header_status">
+                    <span t-attf-class="o_whatsapp_state_badge bg-{{stateInfo.cls}}-subtle text-{{stateInfo.cls}}-emphasis">
+                        <span t-attf-class="o_whatsapp_state_dot bg-{{stateInfo.cls}}"/>
+                        <t t-esc="stateInfo.label"/>
+                    </span>
+                    <span class="o_whatsapp_assigned_to">
+                        Assigned: <t t-esc="assignedUserLabel"/>
+                    </span>
+                </div>
+                <div class="o_whatsapp_thread_header_actions">
+                    <button t-if="conversationState !== 'human_handling' and conversationState !== 'closed'"
+                            class="btn btn-sm btn-primary"
+                            t-on-click="takeOver"
+                            t-att-disabled="state.actionPending">
+                        Take over
+                    </button>
+                    <button t-if="conversationState === 'human_handling'"
+                            class="btn btn-sm btn-outline-secondary"
+                            t-on-click="resumeAi"
+                            t-att-disabled="state.actionPending">
+                        Resume AI
+                    </button>
+                    <button t-if="conversationState !== 'closed'"
+                            class="btn btn-sm btn-outline-secondary"
+                            t-on-click="closeConversation"
+                            t-att-disabled="state.actionPending">
+                        Close
+                    </button>
+                </div>
+            </div>
+
+            <div class="o_whatsapp_thread_body">
+
+                <!-- Chat column -->
+                <div class="o_whatsapp_thread_main">
+                    <div class="o_whatsapp_thread_messages" t-ref="messages">
+                        <t t-if="!messages.length">
+                            <div class="o_whatsapp_thread_empty">
+                                <i class="fa fa-comments-o o_whatsapp_thread_empty_icon"/>
+                                <p>No messages yet</p>
+                            </div>
+                        </t>
+                        <t t-foreach="threadItems" t-as="item" t-key="item.key">
+                            <div t-if="item.type === 'divider'" class="o_whatsapp_day_divider">
+                                <span t-esc="item.label"/>
+                            </div>
+                            <div t-else=""
+                                 t-attf-class="o_whatsapp_row o_whatsapp_row_{{item.msg.direction}}">
+                                <div t-if="item.msg.sender_type === 'system'"
+                                     class="o_whatsapp_system_pill">
+                                    <t t-esc="item.msg.body"/>
+                                </div>
+                                <div t-else=""
+                                     t-attf-class="o_whatsapp_bubble o_whatsapp_sender_{{item.msg.sender_type}}">
+                                    <div class="o_whatsapp_bubble_body" t-esc="item.msg.body"/>
+                                    <div class="o_whatsapp_bubble_meta">
+                                        <span class="o_whatsapp_sender_label" t-esc="senderLabel(item.msg)"/>
+                                        <span class="o_whatsapp_bubble_time" t-esc="formatTime(item.msg.create_date)"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Composer -->
+                    <div class="o_whatsapp_composer">
+                        <t t-if="canReply">
+                            <div class="o_whatsapp_composer_bar">
+                                <textarea
+                                    t-ref="textarea"
+                                    class="o_whatsapp_composer_input"
+                                    placeholder="Type a message"
+                                    rows="1"
+                                    t-att-value="state.draft"
+                                    t-on-input="onDraftInput"
+                                    t-on-keydown="onDraftKeydown"
+                                    t-att-disabled="state.sending"
+                                />
+                                <button
+                                    class="o_whatsapp_composer_send"
+                                    title="Send"
+                                    t-on-click="sendReply"
+                                    t-att-disabled="state.sending or !state.draft.trim()"
+                                >
+                                    <i t-if="!state.sending" class="fa fa-paper-plane"/>
+                                    <i t-else="" class="fa fa-circle-o-notch fa-spin"/>
+                                </button>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="o_whatsapp_composer_disabled">
+                                <i class="fa fa-lock"/>
+                                <span>Take over this conversation to reply</span>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Info sidebar -->
+                <div class="o_whatsapp_thread_sidebar">
+                    <div class="o_whatsapp_sidebar_section">
+                        <div class="o_whatsapp_sidebar_label">Customer</div>
+                        <div class="o_whatsapp_sidebar_value" t-esc="customerTitle"/>
+                    </div>
+                    <div class="o_whatsapp_sidebar_section" t-if="customerPhone">
+                        <div class="o_whatsapp_sidebar_label">Phone</div>
+                        <div class="o_whatsapp_sidebar_value" t-esc="customerPhone"/>
+                    </div>
+                    <div class="o_whatsapp_sidebar_section">
+                        <div class="o_whatsapp_sidebar_label">Status</div>
+                        <span t-attf-class="o_whatsapp_state_badge bg-{{stateInfo.cls}}-subtle text-{{stateInfo.cls}}-emphasis">
+                            <span t-attf-class="o_whatsapp_state_dot bg-{{stateInfo.cls}}"/>
+                            <t t-esc="stateInfo.label"/>
+                        </span>
+                    </div>
+                    <div class="o_whatsapp_sidebar_section">
+                        <div class="o_whatsapp_sidebar_label">Assigned to</div>
+                        <div class="o_whatsapp_sidebar_value" t-esc="assignedUserLabel"/>
+                    </div>
+                    <div class="o_whatsapp_sidebar_section" t-if="handoffReason">
+                        <div class="o_whatsapp_sidebar_label">Handoff reason</div>
+                        <div class="o_whatsapp_sidebar_value" t-esc="handoffReason"/>
+                    </div>
+                    <div class="o_whatsapp_sidebar_section">
+                        <div class="o_whatsapp_sidebar_label">Last message</div>
+                        <div class="o_whatsapp_sidebar_value" t-esc="lastMessageAtLabel"/>
+                    </div>
+                    <div class="o_whatsapp_sidebar_section" t-if="unreadCount">
+                        <div class="o_whatsapp_sidebar_label">Unread</div>
+                        <span class="o_whatsapp_unread_badge" t-esc="unreadCount"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

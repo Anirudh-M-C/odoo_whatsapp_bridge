@@ -1,0 +1,66 @@
+<odoo>
+    <record id="view_whatsapp_config_form" model="ir.ui.view">
+        <field name="name">whatsapp.config.form</field>
+        <field name="model">whatsapp.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_whatsapp_connection" type="object"
+                            string="Test WhatsApp Connection" class="btn-secondary"/>
+                    <button name="action_test_razorpay_connection" type="object"
+                            string="Test Razorpay Connection" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="phone_number_id"/>
+                        <field name="waba_id"/>
+                        <field name="meta_app_id"/>                        <field name="active"/>
+                    </group>                    <group string="WhatsApp">
+                        <field name="whatsapp_token" password="True"/>
+                        <field name="whatsapp_verify_token" password="True"/>
+                        <field name="whatsapp_app_secret" password="True"/>
+                        <field name="graph_api_version"/>
+                    </group>
+                    <group string="Razorpay">
+                        <field name="razorpay_key_id" password="True"/>
+                        <field name="razorpay_key_secret" password="True"/>
+                        <field name="razorpay_webhook_secret" password="True"/>
+                        <field name="razorpay_journal_id"/>
+                        <field name="payment_link_expire_hours"/>
+                    </group>
+                    <group string="Rate Limiting">
+                        <field name="rate_limit_window_seconds"/>
+                        <field name="rate_limit_max_requests"/>
+                    </group>
+                    <group string="Internal Service">
+                        <field name="fastapi_base_url"/>
+                        <field name="internal_shared_secret" password="True"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_whatsapp_config_list" model="ir.ui.view">
+        <field name="name">whatsapp.config.list</field>
+        <field name="model">whatsapp.config</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="company_id"/>
+                <field name="phone_number_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_config" model="ir.actions.act_window">
+        <field name="name">WhatsApp Configuration</field>
+        <field name="res_model">whatsapp.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_whatsapp_root" name="WhatsApp Bot" sequence="50"/>
+    <menuitem id="menu_whatsapp_config" name="Configuration"
+              parent="menu_whatsapp_root" action="action_whatsapp_config" sequence="10"/>
+</odoo>

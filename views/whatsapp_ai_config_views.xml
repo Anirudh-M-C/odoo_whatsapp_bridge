@@ -1,0 +1,69 @@
+<odoo>
+
+    <!-- List View -->
+    <record id="view_whatsapp_ai_config_list" model="ir.ui.view">
+        <field name="name">whatsapp.ai.config.list</field>
+        <field name="model">whatsapp.ai.config</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="company_id"/>
+                <field name="active"/>
+                <field name="chat_model"/>
+                <field name="vision_model"/>
+                <field name="speech_model"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_whatsapp_ai_config_form" model="ir.ui.view">
+        <field name="name">whatsapp.ai.config.form</field>
+        <field name="model">whatsapp.ai.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_ai_model" type="object"
+                            string="Test AI Model" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="active"/>
+                    </group>
+
+                    <group string="Models">
+                        <field name="chat_model" invisible="1"/>
+                        <field name="vision_model" invisible="1"/>
+                        <field name="speech_model" invisible="1"/>
+                    </group>
+
+                    <field name="system_instructions"/>
+
+                    <group string="Behavior">
+                        <field name="max_tool_rounds" invisible="1"/>
+                        <field name="max_conversation_turns"/>
+                        <field name="confirm_keywords"/>
+                        <field name="cancel_keywords"/>
+                        <field name="confirm_max_words"/>
+                        <field name="pdf_extract_max_chars"/>
+                        <field name="rag_top_k"/>
+                        <field name="rag_score_threshold"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_ai_config" model="ir.actions.act_window">
+        <field name="name">AI Configuration</field>
+        <field name="res_model">whatsapp.ai.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_whatsapp_ai_config"
+              name="AI Configuration"
+              parent="menu_whatsapp_root"
+              action="action_whatsapp_ai_config"
+              sequence="15"/>
+
+</odoo>

@@ -1,0 +1,70 @@
+<odoo>
+    <record id="view_whatsapp_knowledge_article_list" model="ir.ui.view">
+        <field name="name">whatsapp.knowledge.article.list</field>
+        <field name="model">whatsapp.knowledge.article</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="question"/>
+                <field name="answer"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_knowledge_article" model="ir.actions.act_window">
+        <field name="name">Knowledge Base</field>
+        <field name="res_model">whatsapp.knowledge.article</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_whatsapp_return_policy_list" model="ir.ui.view">
+        <field name="name">whatsapp.return.policy.list</field>
+        <field name="model">whatsapp.return.policy</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="product_category_id"/>
+                <field name="policy_text"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_return_policy" model="ir.actions.act_window">
+        <field name="name">Return Policies</field>
+        <field name="res_model">whatsapp.return.policy</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_whatsapp_knowledge_test_wizard_form" model="ir.ui.view">
+        <field name="name">whatsapp.knowledge.test.wizard.form</field>
+        <field name="model">whatsapp.knowledge.test.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Test Knowledge Search">
+                <group>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="query"/>
+                </group>
+                <field name="result" readonly="1" invisible="not result"
+                       placeholder="Results will appear here after you run the test."/>
+                <footer>
+                    <button name="action_run_test" type="object" string="Run Test" class="btn-primary"/>
+                    <button string="Close" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_knowledge_test_wizard" model="ir.actions.act_window">
+        <field name="name">Test Knowledge Search</field>
+        <field name="res_model">whatsapp.knowledge.test.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_whatsapp_knowledge_article" name="Knowledge Base"
+              parent="menu_whatsapp_root" action="action_whatsapp_knowledge_article" sequence="20"/>
+    <menuitem id="menu_whatsapp_return_policy" name="Return Policies"
+              parent="menu_whatsapp_root" action="action_whatsapp_return_policy" sequence="30"/>
+    <menuitem id="menu_whatsapp_knowledge_test" name="Test Search"
+              parent="menu_whatsapp_root" action="action_whatsapp_knowledge_test_wizard" sequence="35"/>
+</odoo>

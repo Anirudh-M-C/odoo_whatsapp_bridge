@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_whatsapp_config,access.whatsapp.config,model_whatsapp_config,,1,1,1,1
+access_whatsapp_ai_config,access.whatsapp.ai.config,model_whatsapp_ai_config,,1,1,1,1
+access_whatsapp_bridge,access.whatsapp.bridge,model_whatsapp_bridge,,1,1,1,1
+access_whatsapp_knowledge_article,access.whatsapp.knowledge.article,model_whatsapp_knowledge_article,,1,1,1,1
+access_whatsapp_return_policy,access.whatsapp.return.policy,model_whatsapp_return_policy,,1,1,1,1
+access_whatsapp_notification_template,access.whatsapp.notification.template,model_whatsapp_notification_template,,1,1,1,1
+access_whatsapp_notification_template_variable,access.whatsapp.notification.template.variable,model_whatsapp_notification_template_variable,,1,1,1,1
+access_whatsapp_notification_template_button,access.whatsapp.notification.template.button,model_whatsapp_notification_template_button,,1,1,1,1
+access_whatsapp_conversation,access.whatsapp.conversation,model_whatsapp_conversation,,1,1,1,1
+access_whatsapp_conversation_message,access.whatsapp.conversation.message,model_whatsapp_conversation_message,,1,1,1,1
+access_whatsapp_notification_template_test_wizard_user,whatsapp.notification.template.test.wizard.user,model_whatsapp_notification_template_test_wizard,base.group_user,1,1,1,1
+access_whatsapp_knowledge_test_wizard_user,whatsapp.knowledge.test.wizard.user,model_whatsapp_knowledge_test_wizard,base.group_user,1,1,1,1
+access_whatsapp_broadcast_campaign,access.whatsapp.broadcast.campaign,model_whatsapp_broadcast_campaign,,1,1,1,1
+access_whatsapp_broadcast_recipient,access.whatsapp.broadcast.recipient,model_whatsapp_broadcast_recipient,,1,1,1,1
